@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KENSHIN-404.ELF</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root {
     --neon: #b44fff;
@@ -1891,18 +1892,37 @@ const observer = new IntersectionObserver((entries) => {
 const skillsSec = document.getElementById('skills');
 if (skillsSec) observer.observe(skillsSec);
 
-// SECURE TRANSMISSION ANIMATION
+// ─────────────────────────────────────────────────────────────
+//  EMAILJS SETUP
+//  Replace the three placeholders below with your real values:
+//    YOUR_PUBLIC_KEY  → EmailJS account > Account > Public Key
+//    YOUR_SERVICE_ID  → EmailJS dashboard > Email Services > Service ID
+//    YOUR_TEMPLATE_ID → EmailJS dashboard > Email Templates > Template ID
+//
+//  In your EmailJS template, map these variables:
+//    {{from_name}}    → sender name
+//    {{from_email}}   → sender email
+//    {{message}}      → message body
+// ─────────────────────────────────────────────────────────────
+emailjs.init('YOUR_PUBLIC_KEY');
+
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+// SECURE TRANSMISSION ANIMATION + EMAILJS SEND
 const sendBtn = document.getElementById('send-btn');
 const formBox = sendBtn.closest('.contact-form-box');
 const formFront = formBox.querySelector('.form-inner-front');
-const formBack = formBox.querySelector('.form-inner-back');
+const formBack  = formBox.querySelector('.form-inner-back');
 
 sendBtn.addEventListener('click', function(e) {
   e.preventDefault();
+
   const name    = document.getElementById('sender-name').value.trim();
   const email   = document.getElementById('sender-email').value.trim();
   const message = document.getElementById('sender-message').value.trim();
 
+  // ── Validation ───────────────────────────────────────────────
   if (!name || !email || !message) {
     sendBtn.textContent = 'FILL ALL FIELDS!';
     sendBtn.style.background = '#ff2d6b';
@@ -1913,10 +1933,18 @@ sendBtn.addEventListener('click', function(e) {
     return;
   }
 
-  /* ── ENCODING PIPELINE ──────────────────────────────────────────
-     Raw payload  →  Binary (8-bit groups)  →  Hex  →  Base64
-     Each stage multiplies length, ensuring even short msgs are huge.
-  ──────────────────────────────────────────────────────────────── */
+  // ── Disable button to prevent double-send ────────────────────
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'TRANSMITTING...';
+
+  // ── Fire EmailJS in the background ───────────────────────────
+  const emailPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    from_name:  name,
+    from_email: email,
+    message:    message,
+  });
+
+  // ── Encoding pipeline (visual only) ──────────────────────────
   function toBinary(str) {
     return str.split('').map(c =>
       c.charCodeAt(0).toString(2).padStart(8, '0')
@@ -1932,34 +1960,26 @@ sendBtn.addEventListener('click', function(e) {
   }
 
   const rawPayload  = `SENDER:${name}|ADDR:${email}|MSG:${message}|TIMESTAMP:${Date.now()}`;
-  const binaryLayer = toBinary(rawPayload);
-  const hexLayer    = toHex(rawPayload);
-  const b64Layer    = toBase64(rawPayload);
-
-  /* Build one big display string with layer headers.
-     Cap each layer so the animation always finishes in ~3-4s. */
   const MAX = 300;
   const fullEncoded =
-    `[LAYER-1: BINARY_ENCODE]\n${binaryLayer.slice(0, MAX)}\n\n` +
-    `[LAYER-2: HEX_ENCODE]\n${hexLayer.slice(0, MAX)}\n\n` +
-    `[LAYER-3: BASE64_SEAL]\n${b64Layer.slice(0, MAX)}\n\n` +
+    `[LAYER-1: BINARY_ENCODE]\n${toBinary(rawPayload).slice(0, MAX)}\n\n` +
+    `[LAYER-2: HEX_ENCODE]\n${toHex(rawPayload).slice(0, MAX)}\n\n` +
+    `[LAYER-3: BASE64_SEAL]\n${toBase64(rawPayload).slice(0, MAX)}\n\n` +
     `[STATUS: PACKET_SEALED // TRANSMITTING...]`;
 
-  /* ── ANIMATION ─────────────────────────────────────────────────── */
+  // ── Flip animation ───────────────────────────────────────────
   formBox.classList.add('flipping');
 
   setTimeout(() => {
-    formFront.style.display = 'none';
-    formBack.style.display  = 'flex';
+    formFront.style.display      = 'none';
+    formBack.style.display       = 'flex';
     formBack.style.flexDirection = 'column';
     formBack.style.alignItems    = 'flex-start';
     formBack.style.padding       = '16px';
     formBack.style.overflow      = 'hidden';
     formBack.innerHTML = '';
 
-    /* typing phase */
     const msgEl = document.createElement('div');
-    msgEl.id = 'enc-msg';
     msgEl.style.cssText = `
       font-family: var(--font-mono);
       font-size: 0.62rem;
@@ -1974,9 +1994,8 @@ sendBtn.addEventListener('click', function(e) {
     `;
     formBack.appendChild(msgEl);
 
-    let typed = '';
-    let ti = 0;
-    /* Type 12 chars per tick for a fast stream feel */
+    // Typing phase
+    let typed = '', ti = 0;
     const typeChar = () => {
       if (ti < fullEncoded.length) {
         typed += fullEncoded.slice(ti, ti + 12);
@@ -1989,12 +2008,10 @@ sendBtn.addEventListener('click', function(e) {
       }
     };
 
-    /* dissolve phase — wipe chars; stop when NO real chars remain */
+    // Dissolve phase
     const dissolve = () => {
-      /* Convert to array of single chars — empty strings come from prior wipes */
       let chars = typed.split('');
       const wipe = () => {
-        /* Replace visible non-whitespace chars with glitch chars */
         let glitched = 0;
         for (let i = 0; i < chars.length && glitched < 50; i++) {
           const idx = Math.floor(Math.random() * chars.length);
@@ -2006,50 +2023,70 @@ sendBtn.addEventListener('click', function(e) {
             glitched++;
           }
         }
-        /* Then blank out a batch */
         for (let i = 0; i < 70; i++) {
-          const idx = Math.floor(Math.random() * chars.length);
-          chars[idx] = ' '; /* space, not empty string, avoids join artefacts */
+          chars[Math.floor(Math.random() * chars.length)] = ' ';
         }
         msgEl.textContent = chars.join('');
-
-        /* ── FIXED STOP CONDITION ──
-           Count chars that are real glyphs (not space/newline/empty).
-           Empty strings joined become nothing — we count spaces we set above,
-           so use a dedicated counter of remaining non-blank slots instead. */
         const solidCount = chars.filter(c => c && c.trim() !== '').length;
-        if (solidCount > 0) {
-          setTimeout(wipe, 18);
-        } else {
-          complete();
-        }
+        solidCount > 0 ? setTimeout(wipe, 18) : resolveComplete();
       };
       wipe();
     };
 
-    const complete = () => {
-      formBack.innerHTML = `
-        <div style="text-align:center; width:100%;">
-          <div style="font-family:var(--font-head); color:var(--neon); font-size:1rem;
-                      letter-spacing:4px; text-shadow:var(--neon-glow); margin-bottom:10px;">
-            ✓ TRANSMISSION COMPLETE
-          </div>
-          <div style="font-family:var(--font-mono); color:var(--muted); font-size:0.65rem;
-                      letter-spacing:2px;">
-            PACKET ENCRYPTED &amp; DISPATCHED
-          </div>
-        </div>`;
+    // Wait for BOTH animation dissolve AND EmailJS response
+    let animDone = false, emailResult = null;
+    const tryComplete = () => {
+      if (!animDone || emailResult === null) return;
+      complete(emailResult);
+    };
+
+    const resolveComplete = () => { animDone = true; tryComplete(); };
+    emailPromise
+      .then(() => { emailResult = 'ok';   tryComplete(); })
+      .catch(() => { emailResult = 'err'; tryComplete(); });
+
+    // ── Final success / error screen ─────────────────────────
+    const complete = (result) => {
+      if (result === 'ok') {
+        formBack.innerHTML = `
+          <div style="text-align:center; width:100%;">
+            <div style="font-family:var(--font-head); color:var(--neon); font-size:1rem;
+                        letter-spacing:4px; text-shadow:var(--neon-glow); margin-bottom:10px;">
+              ✓ TRANSMISSION COMPLETE
+            </div>
+            <div style="font-family:var(--font-mono); color:var(--muted); font-size:0.65rem;
+                        letter-spacing:2px;">
+              PACKET ENCRYPTED &amp; DISPATCHED
+            </div>
+          </div>`;
+      } else {
+        formBack.innerHTML = `
+          <div style="text-align:center; width:100%;">
+            <div style="font-family:var(--font-head); color:#ff2d6b; font-size:1rem;
+                        letter-spacing:4px; margin-bottom:10px;">
+              ✗ TRANSMISSION FAILED
+            </div>
+            <div style="font-family:var(--font-mono); color:var(--muted); font-size:0.65rem;
+                        letter-spacing:2px;">
+              CONNECTION ERROR — TRY EMAIL DIRECTLY
+            </div>
+          </div>`;
+      }
+
       setTimeout(() => {
         formBox.classList.remove('flipping');
         formFront.style.display = '';
         formBack.style.display  = 'none';
         formBack.innerHTML = '';
-        sendBtn.textContent = 'TRANSMIT MESSAGE ▶';
+        sendBtn.disabled        = false;
+        sendBtn.textContent     = 'TRANSMIT MESSAGE ▶';
         sendBtn.style.background = '';
-        document.getElementById('sender-name').value    = '';
-        document.getElementById('sender-email').value   = '';
-        document.getElementById('sender-message').value = '';
-      }, 800);
+        if (result === 'ok') {
+          document.getElementById('sender-name').value    = '';
+          document.getElementById('sender-email').value   = '';
+          document.getElementById('sender-message').value = '';
+        }
+      }, 2200);
     };
 
     setTimeout(typeChar, 150);
