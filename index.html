@@ -1892,22 +1892,10 @@ const observer = new IntersectionObserver((entries) => {
 const skillsSec = document.getElementById('skills');
 if (skillsSec) observer.observe(skillsSec);
 
-// ─────────────────────────────────────────────────────────────
-//  EMAILJS SETUP
-//  Replace the three placeholders below with your real values:
-//    YOUR_PUBLIC_KEY  → EmailJS account > Account > Public Key
-//    YOUR_SERVICE_ID  → EmailJS dashboard > Email Services > Service ID
-//    YOUR_TEMPLATE_ID → EmailJS dashboard > Email Templates > Template ID
-//
-//  In your EmailJS template, map these variables:
-//    {{from_name}}    → sender name
-//    {{from_email}}   → sender email
-//    {{message}}      → message body
-// ─────────────────────────────────────────────────────────────
-emailjs.init('YOUR_PUBLIC_KEY');
+emailjs.init('oGFb3gi85M-6Obpxx');
 
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const EMAILJS_SERVICE_ID  = 'service_facwl6s';
+const EMAILJS_TEMPLATE_ID = 'template_art8j1j';
 
 // SECURE TRANSMISSION ANIMATION + EMAILJS SEND
 const sendBtn = document.getElementById('send-btn');
@@ -1939,9 +1927,9 @@ sendBtn.addEventListener('click', function(e) {
 
   // ── Fire EmailJS in the background ───────────────────────────
   const emailPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-    from_name:  name,
-    from_email: email,
-    message:    message,
+    name:    name,
+    email:   email,
+    message: message,
   });
 
   // ── Encoding pipeline (visual only) ──────────────────────────
