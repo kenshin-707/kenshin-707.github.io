@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KENSHIN-404.ELF</title>
+<title>Kenshin-404.ELF</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
@@ -126,6 +126,28 @@
     max-width: 800px;
     opacity: 0.12;
     pointer-events: none;
+  }
+  .hero-avatar {
+    position: absolute;
+    right: -60px; top: 50%;
+    width: 55vw;
+    max-width: 800px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-avatar img {
+    width: 62%;
+    height: auto;
+    filter: drop-shadow(0 0 22px rgba(180,79,255,0.55)) drop-shadow(0 0 48px rgba(180,79,255,0.35));
+    animation: avatar-glow-pulse 4s ease-in-out infinite;
+  }
+  @keyframes avatar-glow-pulse {
+    0%, 100% { filter: drop-shadow(0 0 22px rgba(180,79,255,0.55)) drop-shadow(0 0 48px rgba(180,79,255,0.35)); }
+    50% { filter: drop-shadow(0 0 32px rgba(180,79,255,0.75)) drop-shadow(0 0 64px rgba(180,79,255,0.45)); }
   }
   .hero-corner {
     position: absolute;
@@ -960,12 +982,13 @@
     nav { padding: 14px 20px; }
     .nav-links { display: none; }
     #hero { padding: 100px 20px 60px; }
-    #about, #skills, #projects, #achievements, #terminal, #contact { padding: 80px 20px; }
+    #about, #skills, #projects, #certifications, #achievements, #terminal, #contact { padding: 80px 20px; }
     .about-grid { grid-template-columns: 1fr; gap: 32px; }
     .contact-container { grid-template-columns: 1fr; gap: 32px; }
     footer { flex-direction: column; text-align: center; padding: 24px 20px; }
     .hero-stats { gap: 24px; }
     .hero-cyber { font-size: 4rem; }
+    .hero-avatar { display: none; }
   }
 </style>
 </head>
@@ -988,7 +1011,8 @@
     <li><a href="#about">ABOUT</a></li>
     <li><a href="#skills">SKILLS</a></li>
     <li><a href="#projects">PROJECTS</a></li>
-    <li><a href="#achievements">CERTS</a></li>
+    <li><a href="#certifications">CERTS</a></li>
+    <li><a href="#achievements">ACHIEVEMENTS</a></li>
     <li><a href="#terminal">TERMINAL</a></li>
     <li><a href="#contact">CONTACT</a></li>
   </ul>
@@ -1013,6 +1037,10 @@
     <text x="80" y="380" fill="#b44fff" font-size="9" font-family="monospace" opacity="0.4">SEC::0x7B21</text>
     <text x="310" y="400" fill="#b44fff" font-size="9" font-family="monospace" opacity="0.4">CTF::ACTIVE</text>
   </svg>
+
+  <div class="hero-avatar">
+    <img src="avatar.png" alt="Kenshin-404 Avatar"/>
+  </div>
 
   <div class="hero-corner">
     <div>LVL-01</div>
@@ -1573,8 +1601,8 @@
         <span class="ptag">DOCKER</span>
       </div>
       <div class="project-status">
-        <div class="dot wip"></div>
-        <span>IN PROGRESS</span>
+        <div class="dot"></div>
+        <span>COMPLETED</span>
       </div>
     </div>
     <!-- PROJECT SLOT 4 — PLACEHOLDER -->
@@ -1593,18 +1621,34 @@
         <span style="color:#555">CLASSIFIED</span>
       </div>
     </div>
+    <!-- PROJECT SLOT 5 -->
+    <div class="project-card">
+      <div class="corner-deco tl"></div>
+      <div class="project-id">MISSION_005</div>
+      <div class="project-name">ALPHINE VM SERVER</div>
+      <div class="project-desc">DEVELOPED A SMALL-SCALE SERVER USING ALPINE LINUX WITH A SECURE SSH CONFIGURATION, THEN USED IT TO DEPLOY CTF BETA — THE ENTIRE SETUP RUNS AS A VIRTUAL MACHINE.</div>
+      <div class="project-tags">
+        <span class="ptag">LINUX</span>
+        <span class="ptag">ALPINE</span>
+        <span class="ptag">SSH</span>
+        <span class="ptag">VIRTUALIZATION</span>
+      </div>
+      <div class="project-status">
+        <div class="dot"></div>
+        <span>COMPLETED</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ACHIEVEMENTS -->
-<section id="achievements">
+<section id="certifications">
   <div class="sec-header">
     <div class="sec-tag">RANK_PROGRESSION // 04</div>
-    <div class="sec-title">CERTS & <span>ACHIEVEMENTS</span></div>
+    <div class="sec-title">CERTIFI<span>CATIONS</span></div>
   </div>
   <div class="ach-container">
     <div class="ach-line"></div>
-    <!-- CERTS (existing) -->
     <div class="ach-item">
       <div class="ach-dot"></div>
       <div class="ach-content">
@@ -1632,7 +1676,36 @@
         <div class="ach-badge">✓ VERIFIED</div>
       </div>
     </div>
-    <!-- ACHIEVEMENTS (new, with photo) -->
+    <!-- Example: Add more certifications as needed -->
+    <div class="ach-item">
+      <div class="ach-dot" style="border-color:#555; background:var(--bg);"></div>
+      <div class="ach-content" style="opacity:0.5;">
+        <div class="ach-year">NEXT TARGET // CERT</div>
+        <div class="ach-title">TRYHACKME — CYBERSECURITY 101 </div>
+        <div class="ach-desc">Currently working towards the next certification about cybersecurity fundamentals.</div>
+        <div class="ach-badge" style="color:var(--muted); border-color:#333;">⏳ IN PROGRESS</div>
+      </div>
+    </div>
+    <div class="ach-item">
+      <div class="ach-dot" style="border-color:#555; background:var(--bg);"></div>
+      <div class="ach-content" style="opacity:0.5;">
+        <div class="ach-year">NEXT TARGET // CERT</div>
+        <div class="ach-title">CISCO — INTRODUCTION TO NETWORKING  </div>
+        <div class="ach-desc">Currently working towards the next certification to gain knowledge in networking fundamentals.</div>
+        <div class="ach-badge" style="color:var(--muted); border-color:#333;">⏳ IN PROGRESS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="sec-header">
+    <div class="sec-tag">TROPHY_LOG // 05</div>
+    <div class="sec-title">ACHIEVE<span>MENTS</span></div>
+  </div>
+  <div class="ach-container">
+    <div class="ach-line"></div>
     <div class="ach-item">
       <div class="ach-dot"></div>
       <div class="ach-content" style="display:flex; align-items:center; gap:32px;">
@@ -1664,26 +1737,8 @@
     <!-- Example: Add more achievements as needed -->
     <div class="ach-item">
       <div class="ach-dot" style="border-color:#555; background:var(--bg);"></div>
-      <div class="ach-content" style="opacity:0.5;">
-        <div class="ach-year">NEXT TARGET // CERT</div>
-        <div class="ach-title">TRYHACKME — CYBERSECURITY 101 </div>
-        <div class="ach-desc">Currently working towards the next certification about cybersecurity fundamentals.</div>
-        <div class="ach-badge" style="color:var(--muted); border-color:#333;">⏳ IN PROGRESS</div>
-      </div>
-    </div>
-    <div class="ach-item">
-      <div class="ach-dot" style="border-color:#555; background:var(--bg);"></div>
-      <div class="ach-content" style="opacity:0.5;">
-        <div class="ach-year">NEXT TARGET // CERT</div>
-        <div class="ach-title">CISCO — INTRODUCTION TO NETWORKING  </div>
-        <div class="ach-desc">Currently working towards the next certification to gain knowledge in networking fundamentals.</div>
-        <div class="ach-badge" style="color:var(--muted); border-color:#333;">⏳ IN PROGRESS</div>
-      </div>
-    </div>
-    <div class="ach-item">
-      <div class="ach-dot" style="border-color:#555; background:var(--bg);"></div>
       <div class="ach-content" style="opacity:0.35;">
-        <div class="ach-year">FUTURE // CERT</div>
+        <div class="ach-year">FUTURE // ACHIEVEMENT</div>
         <div class="ach-title">LOCKED: ??? ACHIEVEMENT</div>
         <div class="ach-desc">The next achievement is being unlocked. Stay tuned.</div>
         <div class="ach-badge" style="color:#333; border-color:#222;">🔒 LOCKED</div>
@@ -1695,7 +1750,7 @@
 <!-- TERMINAL -->
 <section id="terminal">
   <div class="sec-header">
-    <div class="sec-tag">SYSTEM_ACCESS // 05</div>
+    <div class="sec-tag">SYSTEM_ACCESS // 06</div>
     <div class="sec-title">INTER<span>ACTIVE</span> TERMINAL</div>
   </div>
   <div class="terminal-window">
@@ -1728,7 +1783,7 @@
 <!-- CONTACT -->
 <section id="contact">
   <div class="sec-header">
-    <div class="sec-tag">SECURE_CHANNEL // 06</div>
+    <div class="sec-tag">SECURE_CHANNEL // 07</div>
     <div class="sec-title">GET IN <span>TOUCH</span></div>
   </div>
   <div class="contact-container">
